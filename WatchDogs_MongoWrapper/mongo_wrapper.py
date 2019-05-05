@@ -2,9 +2,8 @@ from .constants import Constants
 import pymongo
 import re
 from textblob import TextBlob
-import datetime
+from datetime import datetime
 import sys
-import pandas as pd
 import logging
 import logstash
 import json
@@ -35,6 +34,7 @@ class MongoWrapper:
         test_logger = logging.getLogger(logger_name)
         test_logger.setLevel(logging.INFO)
         test_logger.addHandler(logstash.TCPLogstashHandler(self.kibanalogger, 5000, version=1))
+        self.test_logger = test_logger
         return test_logger
 
     '''This will load a newline separated text file into the Stocks document'''
@@ -85,16 +85,9 @@ class MongoWrapper:
         :return: None
         """
         try:
-            dt_object = tweet['DateTimeObject']
+            dt_object = datetime.strptime(tweet['DateTimeObject'], '%Y-%m-%d %H:%M:%S')
             date_of_tweet = str(dt_object.date())
             time_of_tweet = str(dt_object.time())
-            sentiment_value = self.analize_sentiment(tweet.full_text)
-            if sentiment_value < 0:
-                sentiment_polarity = -1
-            elif sentiment_value == 0:
-                sentiment_polarity = 0
-            else:
-                sentiment_polarity = 1
             self.tweets_client.insert_one({
                 "tweet_id" : tweet['id'],
                 "DateTimeObject": dt_object,
@@ -113,12 +106,7 @@ class MongoWrapper:
                 # print('Tried to insert duplicates')
                 pass
             else:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                line = exc_tb.tb_lineno
-                raise Exception('Exception is {excp}, line is {line}, some extra comments: {e_string}'.format(excp=exc_type,
-                                                                                                              line=line,
-                                                                                                              e_string = e))
-                    # exit(1)
+                self.test_logger.error(str(e))
 
     '''Insert documents into Tweets'''
     def insert_tweet_into_db(self, tweets, search_string)-> None:
@@ -157,12 +145,7 @@ class MongoWrapper:
                     # print('Tried to insert duplicates')
                     continue
                 else:
-                    exc_type, exc_obj, exc_tb = sys.exc_info()
-                    line = exc_tb.tb_lineno
-                    raise Exception('Exception is {excp}, line is {line}, some extra comments: {e_string}'.format(excp=exc_type,
-                                                                                                                  line=line,
-                                                                                                                  e_string = e))
-                    # exit(1)
+                    self.test_logger.error(str(e))
 
     def get_tweets_with_lat_long_tweepy(self, stock_name):
         """
