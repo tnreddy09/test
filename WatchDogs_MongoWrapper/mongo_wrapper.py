@@ -93,7 +93,7 @@ class MongoWrapper:
                 "DateTimeObject": dt_object,
                 "Date": date_of_tweet,
                 "Time": time_of_tweet,
-                "Geo": tweet['geo'],
+                "Geo": tweet['Geo'],
                 "Coordinates": tweet['Coordinates'],
                 # "Place": tweet.place.bounding_box.coordinates,
                 "Search_Text": search_string,
