@@ -98,8 +98,8 @@ class MongoWrapper:
                 # "Place": tweet.place.bounding_box.coordinates,
                 "Search_Text": search_string,
                 "Text": tweet['Text'],
-                "Sentiment_Value": tweet['Sentiment_Value'],
-                "Sentiment_Polarity": tweet['Sentiment_Polarity']
+                "Sentiment_Value": float(tweet['Sentiment_Value']),
+                "Sentiment_Polarity": int(tweet['Sentiment_Polarity'])
             })
         except Exception as e:
             if e.__class__.__name__ == 'DuplicateKeyError':
