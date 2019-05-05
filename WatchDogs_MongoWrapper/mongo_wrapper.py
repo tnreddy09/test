@@ -322,51 +322,36 @@ class MongoWrapper:
                     "Text": 1,
                     "Sentiment_Polarity": 1
                 }
-        my_query = {"Search_Text": stock_name, "Sentiment_Polarity":-1}
-        tweets_negative = self.tweets_client.find(my_query,field_required).sort([('_id',1)]).limit(limit)
-        my_query = {"Search_Text": stock_name, "Sentiment_Polarity": 0}
-        tweets_neutral = self.tweets_client.find(my_query,field_required).sort([('_id',1)]).limit(limit)
-        my_query = {"Search_Text": stock_name, "Sentiment_Polarity": 1}
-        tweets_positive = self.tweets_client.find(my_query,field_required).sort([('_id',1)]).limit(limit)
-        if tweets_negative.count() == 0 and tweets_neutral.count() == 0 and tweets_positive.count() == 0:
+        my_query = {"Search_Text": stock_name}
+        all_tweets = self.tweets_client.find(my_query,field_required).sort([('_id',1)]).limit(limit)
+        if all_tweets.count() == 0:
             raise InputStockError
         else:
-            for every_tweet in tweets_negative:
+            for every_tweet in all_tweets:
                 try:
                     lat_long_list = every_tweet['Geo']['coordinates']
                 except:
                     lat_long_list = ['None', 'None']
                 sentiment_polarity = every_tweet["Sentiment_Polarity"]
                 full_text = every_tweet["Text"]
-                root_json_path['Negative_Tweets'].append(
-                    {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
-                     "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
-                     }
-                )
-            for every_tweet in tweets_neutral:
-                try:
-                    lat_long_list = every_tweet['Geo']['coordinates']
-                except:
-                    lat_long_list = ['None', 'None']
-                sentiment_polarity = every_tweet["Sentiment_Polarity"]
-                full_text = every_tweet["Text"]
-                root_json_path['Neutral_Tweets'].append(
-                    {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
-                     "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
-                     }
-                )
-            for every_tweet in tweets_positive:
-                try:
-                    lat_long_list = every_tweet['Geo']['coordinates']
-                except:
-                    lat_long_list = ['None', 'None']
-                sentiment_polarity = every_tweet["Sentiment_Polarity"]
-                full_text = every_tweet["Text"]
-                root_json_path['Positive_Tweets'].append(
-                    {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
-                     "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
-                     }
-                )
+                if sentiment_polarity == -1:
+                    root_json_path['Negative_Tweets'].append(
+                        {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
+                         "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
+                         }
+                    )
+                elif sentiment_polarity == 1:
+                    root_json_path['Positive_Tweets'].append(
+                        {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
+                         "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
+                         }
+                    )
+                else:
+                    root_json_path['Neutral_Tweets'].append(
+                        {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
+                         "Sentiment_Polarity": sentiment_polarity, "Tweet_Text": full_text
+                         }
+                    )
             return json.dumps(root_json_path)
 
 
