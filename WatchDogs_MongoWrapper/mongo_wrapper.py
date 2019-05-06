@@ -165,21 +165,15 @@ class MongoWrapper:
         tweets = self.tweets_client.find(my_query)
         root_json_path = []
         for each_tweet in tweets:
-            try:
-                lat_long_list = each_tweet['Geo']['coordinates']
-                sentiment_value = each_tweet["Sentiment_Value"]
-                full_text = each_tweet["Text"]
-                root_json_path.append(
-                    {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
-                                     "Sentiment_Value":sentiment_value, "Tweet_Text": full_text
-                                     }
-                                    )
-            except Exception as e:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                print('Exception is {excp}, line is {line}, some extra comments: {e_string}'.format(excp=exc_type,
-                                                                                                    line=exc_tb.tb_lineno,
-                                                                                                    e_string=e))
-                raise
+            lat_long_list = each_tweet['Geo']['coordinates']
+            sentiment_value = each_tweet["Sentiment_Value"]
+            full_text = each_tweet["Text"]
+            root_json_path.append(
+                {"Latitude": lat_long_list[0], "Longitude": lat_long_list[1],
+                                 "Sentiment_Value":sentiment_value, "Tweet_Text": full_text
+                                 }
+                                )
+
 
         return json.dumps(root_json_path)
 
