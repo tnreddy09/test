@@ -106,7 +106,8 @@ class MongoWrapper:
                 # print('Tried to insert duplicates')
                 pass
             else:
-                self.test_logger.error(str(e))
+                mongo_logger = self.get_logger('Mongo Logger')
+                mongo_logger.error(str(e))
 
     '''Insert documents into Tweets'''
     def insert_tweet_into_db(self, tweets, search_string)-> None:

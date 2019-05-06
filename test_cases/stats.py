@@ -1,4 +1,5 @@
 from WatchDogs_MongoWrapper import MongoWrapper
+
 if __name__ == "__main__":
     mongo = MongoWrapper()
     logger = mongo.get_logger('Tweets Stats')
