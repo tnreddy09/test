@@ -88,7 +88,7 @@ class MongoWrapper:
         date_of_tweet = str(dt_object.date())
         time_of_tweet = str(dt_object.time())
         self.tweets_client.insert_one({
-            "tweet_id" : tweet['id'],
+            "tweet_id" : tweet['tweet_id'],
             "DateTimeObject": dt_object,
             "Date": date_of_tweet,
             "Time": time_of_tweet,
