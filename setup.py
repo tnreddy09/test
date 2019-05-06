@@ -7,7 +7,8 @@ install_requires=[
     'pymongo',
     'textblob',
     'pandas',
-    'python-logstash'
+    'python-logstash',
+    'simple-crypt'
     ],
  version='2.0',
 

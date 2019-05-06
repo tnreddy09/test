@@ -17,8 +17,8 @@ Schema:
 
 
 class MongoWrapper:
-    def __init__(self):
-        constants = Constants()
+    def __init__(self, decrypt_key):
+        constants = Constants(decrypt_key)
         self.Stocks_collection = constants.mongo_stocks_collection_name
         self.Tweets_collection = constants.mongo_tweets_collection_name
         self.my_client = pymongo.MongoClient(
