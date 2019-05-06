@@ -161,7 +161,7 @@ class MongoWrapper:
         :param company_name:
         :return:
         """
-        my_query = {"Search_Text": stock_name, "Coordinates": {"$ne": None}}
+        my_query = {"$and":[{"Search_Text": stock_name, "Coordinates": {"$ne": None}}, {"Search_Text": stock_name, "Coordinates": {"$ne": "null"}}]}
         tweets = self.tweets_client.find(my_query)
         root_json_path = []
         for each_tweet in tweets:

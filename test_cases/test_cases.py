@@ -44,7 +44,7 @@ class MongoWrapperTests(unittest.TestCase):
         print(mongo.get_lat_long('Facebook'))
     def test_get_tweets_with_lat_long(self):
         mongo = MongoWrapper()
-        test = mongo.get_tweets_with_lat_long('Facebook')
+        test = mongo.get_tweets_with_lat_long('Google')
         print(test)
 
 if __name__ == '__main__':
