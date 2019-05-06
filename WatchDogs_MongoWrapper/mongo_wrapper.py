@@ -7,6 +7,7 @@ import sys
 import logging
 import logstash
 import json
+from pymongo.errors import DuplicateKeyError
 
 '''
 Stocks: A Collection which contains all the Stocks in NYSE.
@@ -87,19 +88,23 @@ class MongoWrapper:
         dt_object = datetime.strptime(tweet['DateTimeObject'], '%Y-%m-%d %H:%M:%S')
         date_of_tweet = str(dt_object.date())
         time_of_tweet = str(dt_object.time())
-        self.tweets_client.insert_one({
-            "tweet_id" : tweet['tweet_id'],
-            "DateTimeObject": dt_object,
-            "Date": date_of_tweet,
-            "Time": time_of_tweet,
-            "Geo": tweet['Geo'],
-            "Coordinates": tweet['Coordinates'],
-            # "Place": tweet.place.bounding_box.coordinates,
-            "Search_Text": search_string,
-            "Text": tweet['Text'],
-            "Sentiment_Value": float(tweet['Sentiment_Value']),
-            "Sentiment_Polarity": int(tweet['Sentiment_Polarity'])
-        })
+        try:
+            self.tweets_client.insert_one({
+                "tweet_id" : tweet['tweet_id'],
+                "DateTimeObject": dt_object,
+                "Date": date_of_tweet,
+                "Time": time_of_tweet,
+                "Geo": tweet['Geo'],
+                "Coordinates": tweet['Coordinates'],
+                # "Place": tweet.place.bounding_box.coordinates,
+                "Search_Text": search_string,
+                "Text": tweet['Text'],
+                "Sentiment_Value": float(tweet['Sentiment_Value']),
+                "Sentiment_Polarity": int(tweet['Sentiment_Polarity'])
+            })
+        except DuplicateKeyError:
+            pass
+
 
 
     '''Insert documents into Tweets'''
